@@ -10,7 +10,7 @@ provider:
     role: arn:aws:iam::214817148898:role/LabRole
   environment:
     SECRET_NAME: alumnos_${sls:stage}_secret  # Secreto con host, user y password
-    DB_NAME: ${sls:stage}
+    DB_NAME: alumnos
 
 functions:
   listar:
