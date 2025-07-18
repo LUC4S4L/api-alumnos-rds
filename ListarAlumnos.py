@@ -10,6 +10,7 @@ def lambda_handler(event, context):
 
     # Recuperar secreto desde Secrets Manager
     client = boto3.client('secretsmanager')
+    connection = None
 
     try:
         response = client.get_secret_value(SecretId=secret_name)
@@ -43,5 +44,5 @@ def lambda_handler(event, context):
         }
 
     finally:
-        if 'connection' in locals():
+        if connection:
             connection.close()
