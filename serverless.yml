@@ -7,7 +7,7 @@ provider:
   memorySize: 1024
   timeout: 20
   iam:
-    role: arn:aws:iam::2148-1714-8898:role/LabRole
+    role: arn:aws:iam::214817148898:role/LabRole
   environment:
     SECRET_NAME: alumnos_${sls:stage}_secret
     DB_NAME: ${sls:stage}
