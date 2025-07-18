@@ -7,9 +7,9 @@ provider:
   memorySize: 1024
   timeout: 20
   iam:
-    role: arn:aws:iam::214817148898:role/LabRole
+    role: arn:aws:iam::2148-1714-8898:role/LabRole
   environment:
-    SECRET_NAME: alumnos_${sls:stage}_secret
+    SECRET_NAME: alumnos_${sls:stage}_secret  # Secreto con host, user y password
     DB_NAME: ${sls:stage}
 
 functions:
@@ -17,7 +17,7 @@ functions:
     handler: ListarAlumnos.lambda_handler
     package:
       include:
-        - ./**
+        - ./**  # Incluir todo el contenido del directorio
     events:
       - http:
           path: /alumnos/listar
