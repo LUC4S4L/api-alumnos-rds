@@ -1,28 +1,24 @@
 import boto3
 import pymysql
 import os
+import json
 
 def lambda_handler(event, context):
-    # Parámetros de conexión (puedes usar Parameter Store o Secrets Manager para mayor seguridad)
-    SSM_host = os.environ['DB_HOST']
-    user = os.environ['DB_USER']
-    SSM_password = os.environ['DB_PASSWORD']
+    # Obtener nombre del secreto desde variable de entorno
+    secret_name = os.environ['SECRET_NAME']
     database = os.environ['DB_NAME']
 
-    # Recuperar los secretos
-    ssm = boto3.client('ssm')
-    response = ssm.get_parameter(
-        Name=SSM_host,
-        WithDecryption=True  # Si es un parámetro seguro
-    )
-    host = response['Parameter']['Value']
-    response = ssm.get_parameter(
-        Name=SSM_password,
-        WithDecryption=True  # Si es un parámetro seguro
-    )
-    password = response['Parameter']['Value']
+    # Recuperar secreto desde Secrets Manager
+    client = boto3.client('secretsmanager')
 
     try:
+        response = client.get_secret_value(SecretId=secret_name)
+        secret = json.loads(response['SecretString'])
+
+        host = secret['host']
+        user = secret['username']
+        password = secret['password']
+
         connection = pymysql.connect(
             host=host,
             user=user,
@@ -32,7 +28,7 @@ def lambda_handler(event, context):
         )
 
         with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM alumnos;")  # Ajusta el nombre de la tabla según tu caso
+            cursor.execute("SELECT * FROM alumnos;")
             results = cursor.fetchall()
 
         return {
@@ -47,5 +43,5 @@ def lambda_handler(event, context):
         }
 
     finally:
-        if connection:
+        if 'connection' in locals():
             connection.close()
