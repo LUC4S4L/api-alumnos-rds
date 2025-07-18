@@ -4,13 +4,10 @@ import os
 import json
 
 def lambda_handler(event, context):
-    # Obtener nombre del secreto desde variable de entorno
     secret_name = os.environ['SECRET_NAME']
     database = os.environ['DB_NAME']
 
-    # Recuperar secreto desde Secrets Manager
     client = boto3.client('secretsmanager')
-    connection = None
 
     try:
         response = client.get_secret_value(SecretId=secret_name)
@@ -44,5 +41,5 @@ def lambda_handler(event, context):
         }
 
     finally:
-        if connection:
+        if 'connection' in locals():
             connection.close()
